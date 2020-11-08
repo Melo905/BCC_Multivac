@@ -1,4 +1,4 @@
-                                                                           Programa BCC_Multivac 
+                                                                     Programa BCC_Multivac 
                                                                            
 Utiliza a teoria de Hermann Ebbinghaus para gerar um cronograma de estudo (não personalizado, apenas seguindo o modelo ideal por conta das nossas limitações) e organizá-lo num arquivo .csv para o aluno salvar no libreoffice.
 
