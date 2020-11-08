@@ -3,7 +3,6 @@
 #prever erros do usuário
 #intuitividade da operação
 import pandas as pd
-import calendar
 #df = pd.DataFrame({"Data\\Assunto": [day1], assunto: [str(time_min)+"min"]})
 
 x = 0
@@ -14,16 +13,17 @@ for x in range(0,100):
         time_min = int("30")#float(input())
         day = int("2") #int(input())
         y = day
-        validade = int("5")#int(input()) #dia em que deve acabar ou número de semanas/meses
-        df = pd.DataFrame({"Data\\Assunto": [str(day)], assunto: [str(time_min)+"min"]})
+        validade = int("100")#int(input()) #dia em que deve acabar ou número de semanas/meses
+        df = pd.DataFrame({"Data\\Assunto": [str(day)], assunto: [str(time_min)+" min"]})
+        time_min = int(time_min)
     if x > 0:# preenchimento da nova coluna
         for y in range(day,validade): #day seria '3'
             #Fórmula (provisória):
-            time_min = time_min * 0,7
-            df.at[indice, assunto] = str(time_min) #inserção do tempo calculado na coluna e linha respectiva
+            day = int(day) + 1
             df.at[indice,"Data\\Assunto"] = str(day)
+            time_min = time_min * 0.7
+            df.at[indice, assunto] = "%.2f"%(time_min)+"min" #inserção do tempo calculado na coluna e linha respectiva
             indice = indice + 1
-    day = int(day) + 1
     x = x + 1 #fim da iteração
 
 print(df)
