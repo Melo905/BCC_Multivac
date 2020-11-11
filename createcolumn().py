@@ -22,7 +22,11 @@ for x in range(0,100):
             day = int(day) + 1
             df.at[indice,"Data\\Assunto"] = str(day)
             time_min = time_min * 0.7
-            df.at[indice, assunto] = "%.2f"%(time_min)+"min" #inserção do tempo calculado na coluna e linha respectiva
+            if time_min >= 1:
+                df.at[indice, assunto] = "%.2f"%(time_min)+"min" #inserção do tempo calculado na coluna e linha respectiva
+            if time_min < 1: #a partir de um momento o tempo de revisão é constante
+                time_min = 1
+                df.at[indice, assunto] = "%.2f"%(time_min)+"min" 
             indice = indice + 1
     x = x + 1 #fim da iteração
 
@@ -40,3 +44,4 @@ print(df)
 
 #Passando para arquivo csv:
 df.to_csv('Multivac.csv', index=False)  
+
