@@ -42,3 +42,4 @@ def calcula_dias(date1,validade):
     return df1,topic_rows
     #df.to_csv('Dias.csv', index = False)
     #return df.insert(loc = 0, column = "Data", value = df["Dia"])
+    #yeah
