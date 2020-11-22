@@ -1,8 +1,7 @@
-#bcc_Multivac (Bibliotecas e esqueleto)
+#BCC_Multivac.py
 import pandas as pd
-from datetime_test import calcula_dias
+from datafunctions import calcula_dias, calcula_dias_dif, the_seeker
 
-# Todas as funções
 def create_column_base(assunto,time_min,start_day,end_day):
     # Chamar função para criar as datas para a tabela:
     df1, topic_rows = calcula_dias(start_day, end_day)
@@ -10,23 +9,23 @@ def create_column_base(assunto,time_min,start_day,end_day):
     df2 = pd.DataFrame({assunto:["%.2f"%(time_min)+"min"]}) 
     x = 0
     indice = 1 #progressão das linhas preenchidas
+    time_min = 0.3 * time_min
     for indice in range(1,topic_rows+1):
         #Fórmula (provisória):
         time_min = time_min * 0.7
         if time_min > 1:
             df2.at[indice, assunto] = "%.2f"%(time_min)+" min" #inserção do tempo calculado na coluna e linha respectiva
         if time_min <=1:
-            df2.at[indice, assunto] = "1.00 min"
+            df2.at[indice, assunto] = "5.00 min"
         indice = indice + 1
     frames = [df1,df2]
     df = pd.concat(frames, axis = 1, ignore_index=False)
     df.rename(columns={"0": "Data", "1": assunto})
     return df
 
-
-def create_and_app(df_current,assunto,time_min,start_day,end_day):
+def create_and_app(coluna,df_current,assunto,time_min,start_day,end_day):
     # Chamar função para criar as datas para a tabela:
-    df1, topic_rows = calcula_dias(start_day, end_day)
+    df1, topic_rows = calcula_dias_dif(coluna,start_day, end_day)
     #criando coluna do assunto com os tempos em minutos:
     df2 = pd.DataFrame({assunto:["%.2f"%(time_min)+"min"]}) 
     x = 0
@@ -42,10 +41,9 @@ def create_and_app(df_current,assunto,time_min,start_day,end_day):
     df = pd.concat([df_current,df], axis = 1, ignore_index=False)
     return df
     
-
 def new_file():#solicita info essenciais para criar uma coluna na tabela
-     # flag -> contar os atributos colocados(limite de 10)
-    for flag in range(1,10):
+     # flag -> contar os atributos colocados(limite de 100)
+    for flag in range(1,100):
         # Info fornecida pelo usuário
         assunto = input("Assunto %d:" % flag)
         time_min = float(input("Tempo de aprendizagem(min):"))#em minutos
@@ -55,43 +53,43 @@ def new_file():#solicita info essenciais para criar uma coluna na tabela
         # Primeiro assunto cria a tabela (os posteriores são emendados à primeira)
         if flag == 1:
             retorno = create_column_base(assunto,time_min,start_day,end_day)
-            
+            coluna = 1
         # Para mais de um assunto
         if flag > 1 and flag <=10:
-            retorno = create_and_app(retorno,assunto,time_min,start_day,end_day)#"Create and append"
-
-        if flag == 10:
-            retorno.to_csv('Multivac.csv', index=False)
+            retorno = create_and_app(coluna,retorno,assunto,time_min,start_day,end_day)#"Create and append"
+            coluna = coluna + 1# numero n ("Dia.n")
+        if flag == 100:
+            arquivo = input("Coloque um nome no seu arquivo(.csv):\n")
+            retorno.to_csv(arquivo, index=False)
+            print("Seu arquivo está pronto. Olhe na pasta do programa!")
         #Pergunta se vai continuar a iteração
         mais = input("Adicionar outro assunto? S ou N\n")
         if mais == "S" or mais == "s":
             flag = flag + 1
         if mais == "N" or mais == "n":
             flag = 11
-            retorno.to_csv('Multivac.csv', index=False)
+            arquivo = input("Coloque um nome no seu arquivo(.csv):\n")
+            retorno.to_csv(arquivo, index=False)
             print("Seu arquivo está pronto. Olhe na pasta do programa!")
-
-    # Ao final das iterações, salvar a tabela        
-    print(df)
-    df.to_csv('Multivac.csv', index=False)
-        #else:
-            #print("Nao entendi. \"S\" para \"Sim\" ou \"N\" para \"Não\".")#Colocar condição para retornar à pergunta
+            main()
     
-    
-def mod_file():
-    print("Localizar arquivo")
+def search_file():
+    arquivo = input("Insira o nome do arquivo para a consulta: ")
+    the_seeker(arquivo)
 
+# Tela Inicial
+def main():
+    print("*****************************  TABELA EBBINGHAUS  *************************")
+    print("\nInsira os assuntos que você estuda e o programa vai agendar suas revisoes.")
+    choice1 = input ("\n1)Novo arquivo      2)Consultar seu arquivo      3)Sair\n")
+    if choice1 == "1":
+        new_file()
+    if choice1 == "2":
+        search_file()
+    if choice1 == "3":
+        print("Programa terminado.")
 
-# Mainframe
-print("*****************************  TABELA EBBINGHAUS  *************************")
-print("\nInsira os assuntos que você estuda e o programa vai agendar suas revisoes.")
-choice1 = input ("\n1)Novo arquivo      2)Modificar seu arquivo      3)Sair\n")
-if choice1 == "1":
-    new_file()
-if choice1 == "2":
-    mod_file()
-if choice1 == "3":
-    print("Programa terminado.")
+main()
 
     
 
