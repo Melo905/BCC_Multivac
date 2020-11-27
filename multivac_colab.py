@@ -93,13 +93,14 @@ def the_seeker(arquivo):
       n=0
       if n == 0:
         if df.at[i,'Dia'] == seek_data:
-          print(df.loc[[i]])
+          col_id = df.columns.get_loc('Dia')
+          print(df.columns[col_id+1], df.at[i,'Dia'], df.iat[i,col_id+1])          
         n = 1
       for n in range (1,limite,1):
         string = "Dia "+str(n)
         if df.at[i,string] == seek_data:
-          print(df.loc[[i]])
-          print(i)
+          col_id = df.columns.get_loc(string)
+          print(df.columns[col_id+1], df.at[i,string], df.iat[i,col_id+1])
     choice = input("1) Pesquisar mais alguma data no mesmo arquivo.             2) Tela Inicial.\n")
     if choice == "2":
       continuar = False
