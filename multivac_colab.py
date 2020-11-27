@@ -88,18 +88,18 @@ def the_seeker(arquivo):
     #instruções para procurar na tabela
     i = 0
     rows, col = df.shape
-    limite = int(col/2)-1
+    limite = int(col/2)
     for i in range(0,rows):
       n=0
       if n == 0:
         if df.at[i,'Dia'] == seek_data:
           print(df.loc[[i]])
-          n = 1
+        n = 1
       for n in range (1,limite,1):
         string = "Dia "+str(n)
         if df.at[i,string] == seek_data:
-          #print(df_bool.at[i,'Dia'] )
           print(df.loc[[i]])
+          print(i)
     choice = input("1) Pesquisar mais alguma data no mesmo arquivo.             2) Tela Inicial.\n")
     if choice == "2":
       continuar = False
