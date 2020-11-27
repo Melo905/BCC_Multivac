@@ -146,42 +146,41 @@ def create_and_app(coluna,df_current,assunto,time_min,start_day,end_day):
        
 def new_file():#solicita info essenciais para criar uma coluna na tabela
      # flag -> contar os atributos colocados(limite de 100)
-    for flag in range(1,100):
-        # Info fornecida pelo usuário
-        assunto = input("Assunto %d:" % flag)
-        time_min = float(input("Tempo de aprendizagem(min):"))#em minutos
-        start_day = input("Insira a data de início de contagem dessa forma '2020-12-25':")#função de data
-        end_day = input("Prazo de validade(em dias):")#função de data
-        # Primeiro assunto cria a tabela (os posteriores são emendados à primeira)
-        if flag == 1:
-            retorno = create_column_base(assunto,time_min,start_day,end_day)
-            coluna = 1
-        # Para mais de um assunto
-        if flag > 1 and flag <=100:
-            retorno = create_and_app(coluna,retorno,assunto,time_min,start_day,end_day)#"Create and append"
-            coluna = coluna + 1# numero n ("Dia.n")
-        if flag == 100:
-            arquivo = input("Coloque um nome no seu arquivo(.csv):\n")
-            retorno.to_csv(arquivo, index=False)
-            print("Seu arquivo está pronto. Olhe na pasta do programa!")
-        #Pergunta se vai continuar a iteração
-        mais = input("Adicionar outro assunto? S ou N\n")
-        if mais == "S" or mais == "s":
-            flag = flag + 1
-        if mais == "N" or mais == "n":
-            flag = 11
-            arquivo = input("Coloque um nome no seu arquivo(.csv):\n")
-            retorno.to_csv(arquivo, index=False)
-            print("Seu arquivo está pronto. Olhe na pasta do programa!")
-            print("Para pesquisar nele,vá na opção 2 e insira '%s' e uma data que você gostaria de saber se existem revisões." % arquivo)
-            main()
-            break
+  flag = 1
+  continuar = True
+  while continuar == True:
+    # Info fornecida pelo usuário
+    assunto = input("Assunto %d:" % flag)
+    time_min = float(input("Tempo de aprendizagem (em minutos):"))#em minutos
+    start_day = input("Insira a data de início de contagem dessa forma '2020-12-30':")#função de data
+    end_day = int(input("Prazo de validade (em dias):"))#função de data
+    # Primeiro assunto cria a tabela (os posteriores são emendados à primeira)
+    if flag == 1:
+      retorno = create_column_base(assunto,time_min,start_day,end_day)
+      coluna = 1
+    # Para mais de um assunto
+    if flag > 1:
+      retorno = create_and_app(coluna,retorno,assunto,time_min,start_day,end_day)#"Create and append"
+      coluna = coluna + 1
+    while continuar == True: 
+      mais = input("Adicionar outro assunto? S ou N\n")
+      if mais == "S" or mais == "s":
+        flag = flag + 1
+        break
+      elif mais == "N" or mais == "n":
+        arquivo = input("Coloque um nome no seu arquivo(.csv):\n")
+        retorno.to_csv(arquivo, index=False)
+        print("Seu arquivo está pronto. Olhe na pasta do programa!")
+        print("Para pesquisar nele,vá na opção 2 e insira '%s' e uma data que você gostaria de saber se existem revisões." % arquivo)        continuar = False
+      else:
+        print("Digite 'S' ou 'N' para escolher!")
+        
     
 # Tela Inicial
 def main():
   continuar = True
   print("*****************************  TABELA EBBINGHAUS  *************************")
-  print("\nInsira os assuntos que você estuda e o programa vai agendar suas revisoes.")
+  print("\nInsira os assuntos que você estuda e o programa vai agendar suas revisões.")
   while continuar == True:
     choice1 = input ("\n1)Novo arquivo      2)Consultar seu arquivo      3)Sair\n")
     if choice1 == "1":
@@ -194,7 +193,7 @@ def main():
         continuar = False
     else:
       print("Entrada incorreta. Digite o número correspondente à sua escolha!")
-
+    
 main()
 
     
