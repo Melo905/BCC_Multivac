@@ -30,8 +30,7 @@ def calcula_dias(date1,validade):
         indice = indice + 1
         flag = 60
         topic_rows = topic_rows + 1
-    for flag in range(60,int(validade)):
-        flag = flag + 30
+    for flag in range(60,int(validade),30):
         if flag % 30 == 0:
             date4 = date4 + timedelta(days =30)#intervalos de dias constantes (30 em 30 dias)
             df.at[indice,"Dia"] = str(date4)
@@ -90,17 +89,17 @@ def the_seeker(arquivo):
     rows, col = df.shape
     limite = int(col/2)
     for i in range(0,rows):
-      n=0
-      if n == 0:
+      n=1
+      if n == 1:
         if df.at[i,'Dia'] == seek_data:
           col_id = df.columns.get_loc('Dia')
-          print(df.columns[col_id+1], df.at[i,'Dia'], df.iat[i,col_id+1])          
-        n = 1
-      for n in range (1,limite,1):
+          print("\n"+df.columns[col_id+1],"-", df.at[i,'Dia'],"-", df.iat[i,col_id+1])          
+        n = 2
+      for n in range (2,limite+1,1):
         string = "Dia "+str(n)
         if df.at[i,string] == seek_data:
           col_id = df.columns.get_loc(string)
-          print(df.columns[col_id+1], df.at[i,string], df.iat[i,col_id+1])
+          print(df.columns[col_id+1],"-", df.at[i,string],"-", df.iat[i,col_id+1])
     choice = input("1) Pesquisar mais alguma data no mesmo arquivo.             2) Tela Inicial.\n")
     if choice == "2":
       continuar = False
@@ -145,53 +144,77 @@ def create_and_app(coluna,df_current,assunto,time_min,start_day,end_day):
     return df
        
 def new_file():#solicita info essenciais para criar uma coluna na tabela
-     # flag -> contar os atributos colocados(limite de 100)
-    for flag in range(1,100):
-        # Info fornecida pelo usuário
-        assunto = input("Assunto %d:" % flag)
-        time_min = float(input("Tempo de aprendizagem(min):"))#em minutos
-        start_day = input("Insira a data de início de contagem dessa forma '2020-12-25':")#função de data
-        end_day = input("Prazo de validade(em dias):")#função de data
-        # Primeiro assunto cria a tabela (os posteriores são emendados à primeira)
-        if flag == 1:
-            retorno = create_column_base(assunto,time_min,start_day,end_day)
-            coluna = 1
-        # Para mais de um assunto
-        if flag > 1 and flag <=100:
-            retorno = create_and_app(coluna,retorno,assunto,time_min,start_day,end_day)#"Create and append"
-            coluna = coluna + 1# numero n ("Dia.n")
-        if flag == 100:
-            arquivo = input("Coloque um nome no seu arquivo(.csv):\n")
-            retorno.to_csv(arquivo, index=False)
-            print("Seu arquivo está pronto. Olhe na pasta do programa!")
-        #Pergunta se vai continuar a iteração
-        mais = input("Adicionar outro assunto? S ou N\n")
-        if mais == "S" or mais == "s":
-            flag = flag + 1
-        if mais == "N" or mais == "n":
-            flag = 11
-            arquivo = input("Coloque um nome no seu arquivo(.csv):\n")
-            retorno.to_csv(arquivo, index=False)
-            print("Seu arquivo está pronto. Olhe na pasta do programa!")
-            print("Para pesquisar nele,vá na opção 2 e insira '%s' e uma data que você gostaria de saber se existem revisões." % arquivo)
-            main()
-            break
+     # flag -> contar os atributos colocados
+  flag = 1
+  continuar = True
+  while continuar == True:
+    # Info fornecida pelo usuário
+    assunto = input("Assunto %d:" % flag)
+    time_min = float(input("Tempo de aprendizagem (em minutos):"))#em minutos
+    start_day = input("Insira a data de início de contagem dessa forma '2020-12-30':")#função de data
+    end_day = int(input("Prazo de validade (em dias):"))#função de data
+    # Primeiro assunto cria a tabela (os posteriores são emendados à primeira)
+    if flag == 1:
+      retorno = create_column_base(assunto,time_min,start_day,end_day)
+      coluna = 2
+    # Para mais de um assunto
+    if flag > 1:
+      retorno = create_and_app(coluna,retorno,assunto,time_min,start_day,end_day)#"Create and append"
+      coluna = coluna + 1
+    while continuar == True: 
+      mais = input("Adicionar outro assunto? S ou N\n")
+      if mais == "S" or mais == "s":
+        flag = flag + 1
+        break
+      elif mais == "N" or mais == "n":
+        arquivo = input("Coloque um nome no seu arquivo(.csv):\n")
+        retorno.to_csv(arquivo, index=False)
+        print("Seu arquivo está pronto. Olhe na pasta do programa!")
+        print("Para pesquisar nele,vá na opção 2 e insira '%s' e uma data que você gostaria de saber se existem revisões." % arquivo)        
+        continuar = False
+      else:
+        print("Digite 'S' ou 'N' para escolher!")
     
 # Tela Inicial
 def main():
   continuar = True
+  count = 1
   print("*****************************  TABELA EBBINGHAUS  *************************")
-  print("\nInsira os assuntos que você estuda e o programa vai agendar suas revisoes.")
+  print("\nInsira os assuntos que você estuda e o programa vai agendar suas revisões.")
   while continuar == True:
     choice1 = input ("\n1)Novo arquivo      2)Consultar seu arquivo      3)Sair\n")
     if choice1 == "1":
         new_file()
     elif choice1 == "2":
-      arquivo = input("Insira o nome do arquivo para a consulta: ")
-      the_seeker(arquivo)
+      while True:
+        if count == 5:
+          break
+        arquivo = input("Insira o nome do arquivo para a consulta: ")
+        count = 1
+        while count in range (1,5):
+          try:
+            the_seeker(arquivo)
+            break
+          except FileNotFoundError:
+            if count == 4 or count == 5:
+              break
+            arquivo = input("Arquivo não encontrado. Talvez seja erro de digitação. Tente novamente:\n")
+            count = count + 1
+            if count == 3:
+              print("Arquivo não encontrado. Verifique se você digitou corretamente, se o arquivo está fora da pasta do programa,\nse é um arquivo CSV, ou se a existência dele não é só fruto da sua imaginação.")
+              choice = input("Deseja cancelar a pesquisa? S/N\n")
+              while True:
+                if choice == "S" or choice == "s":
+                  count = 5
+                  break
+                elif choice == "N" or choice == "n":
+                  count = 4
+                  break
+                else:
+                  print("'S' para 'Sim' e 'N' para 'Não'!")
     elif choice1 == "3":
-        print("Programa terminado.")
-        continuar = False
+      print("Programa terminado.")
+      continuar = False
     else:
       print("Entrada incorreta. Digite o número correspondente à sua escolha!")
 
