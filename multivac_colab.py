@@ -11,10 +11,7 @@ def calcula_dias(date1,validade):
       flag = 1
       indice = 1
       df = pd.DataFrame({"Dia":[date1]})
-  #A partir daí, calcular a diferença de dias em que o usuário vai estudar
-  #e só imprimir as linhas com esses dias no dataframe.
-  #flag = n° de dias depois do primeiro estudo
-      if flag == 1:
+      if flag == 1: #flag = n° de dias depois do primeiro estudo
           date2 = date1 + timedelta(days = 1)#24h depois do estudo
           df.at[indice,"Dia"] = str(date2)
           flag = 7
@@ -46,10 +43,7 @@ def calcula_dias(date1,validade):
       date1 = input("Insira a data de início de contagem dessa forma '2020-12-30':")#função de data
       validade = int(input("Prazo de validade (em dias):"))#função de data   
 
-#mudar o número do atributo "Dias.n"
-#usando 'coluna'
-
-def calcula_dias_dif(coluna,date1,validade):
+def calcula_dias_dif(coluna,date1,validade):#mudar o número do atributo "Dias" com o acréscimo da posição da coluna
   while True:
     try:
       date1 = date.fromisoformat(date1)
@@ -97,26 +91,30 @@ def the_seeker(arquivo):
   df = pd.read_csv(arquivo)# procurar arquivo no formato .csv
   print(df)
   while continuar == True:
-    seek_data = input("Procurar por data(ex.: 2020-11-19): ")
-    #instruções para procurar na tabela
-    i = 0
-    rows, col = df.shape
-    limite = int(col/2)
-    for i in range(0,rows):
-      n=1
-      if n == 1:
-        if df.at[i,'Dia'] == seek_data:
-          col_id = df.columns.get_loc('Dia')
-          print("\n"+df.columns[col_id+1],"-", df.at[i,'Dia'],"-", df.iat[i,col_id+1])          
-        n = 2
-      for n in range (2,limite+1,1):
-        string = "Dia "+str(n)
-        if df.at[i,string] == seek_data:
-          col_id = df.columns.get_loc(string)
-          print(df.columns[col_id+1],"-", df.at[i,string],"-", df.iat[i,col_id+1])
-    choice = input("1) Pesquisar mais alguma data no mesmo arquivo.             2) Tela Inicial.\n")
-    if choice == "2":
-      continuar = False
+    try:
+      seek_data = input("Procurar por data(ex.: 2020-11-19): ")
+      #instruções para procurar na tabela
+      i = 0
+      rows, col = df.shape
+      limite = int(col/2)
+      for i in range(0,rows):
+        n=1
+        if n == 1:
+          if df.at[i,'Dia'] == seek_data:
+            col_id = df.columns.get_loc('Dia')
+            print("\n"+df.columns[col_id+1],"-", df.at[i,'Dia'],"-", df.iat[i,col_id+1])          
+          n = 2
+        for n in range (2,limite+1,1):
+          string = "Dia "+str(n)
+          if df.at[i,string] == seek_data:
+            col_id = df.columns.get_loc(string)
+            print(df.columns[col_id+1],"-", df.at[i,string],"-", df.iat[i,col_id+1])
+      choice = input("1) Pesquisar mais alguma data no mesmo arquivo.             2) Tela Inicial.\n")
+      if choice == "2":
+        return 5 #acabar com o while loop do menu principal, se não, ao encerrar essa funão, ele pede para inserir o nome do arquivo novamente
+        continuar = False
+    except ((ValueError,TypeError,KeyError)):
+      print("Parece que essa data não existe na Tabela. Tente outra vez.")
 
 def create_column_base(assunto,time_min,start_day,end_day):
     # Chamar função para criar as datas para a tabela:
@@ -215,19 +213,19 @@ def main():
           break
         arquivo = input("Insira o nome do arquivo para a consulta: ")
         count = 1
-        while count in range (1,5):
+        while True:
           try:
-            the_seeker(arquivo)
+            count = the_seeker(arquivo)
             break
-          except FileNotFoundError:
+          except (FileNotFoundError,pd.errors.EmptyDataError):
             if count == 4 or count == 5:
               break
             arquivo = input("Arquivo não encontrado. Talvez seja erro de digitação. Tente novamente:\n")
             count = count + 1
             if count == 3:
               print("Arquivo não encontrado. Verifique se você digitou corretamente, se o arquivo está fora da pasta do programa,\nse é um arquivo CSV, ou se a existência dele não é só fruto da sua imaginação.")
-              choice = input("Deseja cancelar a pesquisa? S/N\n")
               while True:
+                choice = input("Deseja cancelar a pesquisa? S/N\n")
                 if choice == "S" or choice == "s":
                   count = 5
                   break
