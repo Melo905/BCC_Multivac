@@ -120,16 +120,18 @@ def create_column_base(assunto,time_min,start_day,end_day):
     # Chamar função para criar as datas para a tabela:
     df1, topic_rows = calcula_dias(start_day, end_day)
     #criando coluna do assunto com os tempos em minutos:
+    time_min = 0.3 * time_min # 30% do tempo de aprendizagem
     df2 = pd.DataFrame({assunto:["%.2f"%(time_min)+"min"]}) 
     x = 0
     indice = 1 #progressão das linhas preenchidas
-    time_min = 0.3 * time_min
+    time_min = 0.30 * time_min
     for indice in range(1,topic_rows+1):
         #Fórmula (provisória):
-        time_min = time_min * 0.7
-        if time_min > 1:
+        if indice >= 2:
+          time_min = time_min * 0.7
+        if time_min >= 5:
             df2.at[indice, assunto] = "%.2f"%(time_min)+" min" #inserção do tempo calculado na coluna e linha respectiva
-        if time_min <=1:
+        if time_min < 5:
             df2.at[indice, assunto] = "5.00 min"
         indice = indice + 1
     frames = [df1,df2]
@@ -144,11 +146,16 @@ def create_and_app(coluna,df_current,assunto,time_min,start_day,end_day):
     df2 = pd.DataFrame({assunto:["%.2f"%(time_min)+"min"]}) 
     x = 0
     indice = 1 #progressão das linhas preenchidas
+    time_min = 0.30 * time_min
     for indice in range(1,topic_rows+1):
-        #Fórmula (provisória):
+      #Fórmula (provisória):
+      if indice >= 2:
         time_min = time_min * 0.7
-        df2.at[indice, assunto] = "%.2f"%(time_min)+"min" #inserção do tempo calculado na coluna e linha respectiva
-        indice = indice + 1
+      if time_min >= 5:
+        df2.at[indice, assunto] = "%.2f"%(time_min)+" min" #inserção do tempo calculado na coluna e linha respectiva
+      if time_min < 5:
+        df2.at[indice, assunto] = "5.00 min"
+      indice = indice + 1
     frames = [df1,df2]
     df = pd.concat(frames, axis = 1, ignore_index=False)
     df.rename(columns={"0": "Data", "1": assunto})
