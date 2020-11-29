@@ -9,11 +9,10 @@ def calcula_dias(date1,validade):
     try:
       date1 = date.fromisoformat(date1)
       flag = 1
-      indice = 1
-      df = pd.DataFrame({"Dia":[date1]})
+      indice = 0
       if flag == 1: #flag = n° de dias depois do primeiro estudo
           date2 = date1 + timedelta(days = 1)#24h depois do estudo
-          df.at[indice,"Dia"] = str(date2)
+          df = pd.DataFrame({"Dia":[date2]})
           flag = 7
           topic_rows = 1#Quantas linhas são de fato, para que a coluna de assunto bata
           indice = indice + 1
@@ -48,12 +47,11 @@ def calcula_dias_dif(coluna,date1,validade):#mudar o número do atributo "Dias" 
     try:
       date1 = date.fromisoformat(date1)
       flag = 1
-      indice = 1
+      indice = 0
       data = "Dia " + str(coluna)
-      df = pd.DataFrame({data:[date1]})
       if flag == 1:
           date2 = date1 + timedelta(days = 1)
-          df.at[indice,data] = date2
+          df = pd.DataFrame({data:[date2]})
           flag = 7
           topic_rows = 1 
           indice = indice + 1
@@ -109,10 +107,15 @@ def the_seeker(arquivo):
           if df.at[i,string] == seek_data:
             col_id = df.columns.get_loc(string)
             print(df.columns[col_id+1],"-", df.at[i,string],"-", df.iat[i,col_id+1])
-      choice = input("1) Pesquisar mais alguma data no mesmo arquivo.             2) Tela Inicial.\n")
-      if choice == "2":
-        return 5 #acabar com o while loop do menu principal, se não, ao encerrar essa funão, ele pede para inserir o nome do arquivo novamente
-        continuar = False
+      while True:
+        choice = input("1) Pesquisar mais alguma data no mesmo arquivo.             2) Tela Inicial.\n")
+        if choice == "1":
+          break
+        elif choice == "2":
+          return 5 #acabar com o while loop do menu principal, se não, ao encerrar essa funão, ele pede para inserir o nome do arquivo novamente
+          continuar = False
+        else: 
+          print("As opções são 1 ou 2.")
     except ((ValueError,TypeError,KeyError)):
       print("Parece que essa data não existe na Tabela. Tente outra vez.")
 
@@ -143,10 +146,10 @@ def create_and_app(coluna,df_current,assunto,time_min,start_day,end_day):
     # Chamar função para criar as datas para a tabela:
     df1, topic_rows = calcula_dias_dif(coluna, start_day, end_day)
     #criando coluna do assunto com os tempos em minutos:
+    time_min = 0.30 * time_min
     df2 = pd.DataFrame({assunto:["%.2f"%(time_min)+"min"]}) 
     x = 0
     indice = 1 #progressão das linhas preenchidas
-    time_min = 0.30 * time_min
     for indice in range(1,topic_rows+1):
       #Fórmula (provisória):
       if indice >= 2:
