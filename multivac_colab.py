@@ -87,7 +87,7 @@ def the_seeker(arquivo):
   continuar = True
   pd.set_option("display.max_rows", None, "display.max_columns", None)# mostrar todas as colunas e linhas do dataframe
   df = pd.read_csv(arquivo)# procurar arquivo no formato .csv
-  print(df)
+  print(df.fillna('---'))
   while continuar == True:
     try:
       seek_data = input("Procurar por data(ex.: 2020-11-19): ")
@@ -218,6 +218,7 @@ def main():
     if choice1 == "1":
         new_file()
     elif choice1 == "2":
+      count = 0
       while True:
         if count == 5:
           break
