@@ -1,3 +1,7 @@
+#primeira célula
+!pip install backports-datetime-fromisoformat
+
+#segunda célula
 from datetime import date, datetime, timedelta
 from backports.datetime_fromisoformat import MonkeyPatch
 MonkeyPatch.patch_fromisoformat()
@@ -7,15 +11,15 @@ import pandas as pd
 def calcula_dias(date1,validade):
    while True:
     try:
-      date1 = date.fromisoformat(date1)
+      date1 = date.fromisoformat(date1) 
       flag = 1
       indice = 0
       if flag == 1: #flag = n° de dias depois do primeiro estudo
           date2 = date1 + timedelta(days = 1)#24h depois do estudo
           df = pd.DataFrame({"Dia":[date2]})
           flag = 7
-          topic_rows = 1#Quantas linhas são de fato, para que a coluna de assunto bata
-          indice = indice + 1
+          topic_rows = 0#Quantas linhas são de fato, para que a coluna de assunto bata
+          indice = indice + 1 #indice++
       if flag == 7: # condição é a soma dos dias totais passados desde a primeira sessão
           date3 = date1 + timedelta(days = 7)#1 semana depois do estudo
           df.at[indice,"Dia"] = str(date3)
@@ -29,11 +33,11 @@ def calcula_dias(date1,validade):
           flag = 60
           topic_rows = topic_rows + 1
       for flag in range(60,int(validade),30):
-          if flag % 30 == 0:
-              date4 = date4 + timedelta(days =30)#intervalos de dias constantes (30 em 30 dias)
-              df.at[indice,"Dia"] = str(date4)
-              indice = indice + 1
-              topic_rows = topic_rows + 1 
+          #if flag % 30 == 0:
+        date4 = date4 + timedelta(days =30)#intervalos de dias constantes (30 em 30 dias)
+        df.at[indice,"Dia"] = str(date4)
+        indice = indice + 1
+        topic_rows = topic_rows + 1 
       df1 = df
       return df1,topic_rows    
       break
@@ -48,12 +52,12 @@ def calcula_dias_dif(coluna,date1,validade):#mudar o número do atributo "Dias" 
       date1 = date.fromisoformat(date1)
       flag = 1
       indice = 0
-      data = "Dia " + str(coluna)
+      data = "Dia " + str(coluna) #= 2
       if flag == 1:
           date2 = date1 + timedelta(days = 1)
           df = pd.DataFrame({data:[date2]})
           flag = 7
-          topic_rows = 1 
+          topic_rows = 0 
           indice = indice + 1
       if flag == 7: 
           date3 = date1 + timedelta(days = 7)
@@ -112,8 +116,8 @@ def the_seeker(arquivo):
         if choice == "1":
           break
         elif choice == "2":
-          return 5 #acabar com o while loop do menu principal, se não, ao encerrar essa funão, ele pede para inserir o nome do arquivo novamente
-          continuar = False
+          return 5 #acabar com o while loop do menu principal, se não, ao encerrar essa função, ele pede para inserir o nome do arquivo novamente
+          continuar = False2
         else: 
           print("As opções são 1 ou 2.")
     except ((ValueError,TypeError,KeyError)):
@@ -125,8 +129,7 @@ def create_column_base(assunto,time_min,start_day,end_day):
     #criando coluna do assunto com os tempos em minutos:
     time_min = 0.3 * time_min # 30% do tempo de aprendizagem
     df2 = pd.DataFrame({assunto:["%.2f"%(time_min)+"min"]}) 
-    x = 0
-    indice = 1 #progressão das linhas preenchidas
+    indice = 1 #progressão das linhas preenchidas 
     time_min = 0.30 * time_min
     for indice in range(1,topic_rows+1):
         #Fórmula (provisória):
@@ -139,7 +142,7 @@ def create_column_base(assunto,time_min,start_day,end_day):
         indice = indice + 1
     frames = [df1,df2]
     df = pd.concat(frames, axis = 1, ignore_index=False)
-    df.rename(columns={"0": "Data", "1": assunto})
+    #df.rename(columns={"0": "Data", "1": assunto})
     return df
 
 def create_and_app(coluna,df_current,assunto,time_min,start_day,end_day):
@@ -148,7 +151,6 @@ def create_and_app(coluna,df_current,assunto,time_min,start_day,end_day):
     #criando coluna do assunto com os tempos em minutos:
     time_min = 0.30 * time_min
     df2 = pd.DataFrame({assunto:["%.2f"%(time_min)+"min"]}) 
-    x = 0
     indice = 1 #progressão das linhas preenchidas
     for indice in range(1,topic_rows+1):
       #Fórmula (provisória):
@@ -161,7 +163,7 @@ def create_and_app(coluna,df_current,assunto,time_min,start_day,end_day):
       indice = indice + 1
     frames = [df1,df2]
     df = pd.concat(frames, axis = 1, ignore_index=False)
-    df.rename(columns={"0": "Data", "1": assunto})
+    #df.rename(columns={"0": "Data", "1": assunto})
     df = pd.concat([df_current,df], axis = 1, ignore_index=False)
     return df
        
